@@ -2,7 +2,7 @@ package main
 
 import (
 	"L0/internal"
-	"encoding/json"
+	json "github.com/mailru/easyjson"
 	"github.com/nats-io/stan.go"
 	"log"
 	"time"
@@ -39,9 +39,9 @@ func publishEvent(data *internal.Order) {
 
 func main() {
 	order := internal.Order{
-		OrderUid:    "2",
-		TrackNumber: "",
-		Entry:       "",
+		OrderUid:    "3",
+		TrackNumber: "12435",
+		Entry:       "rpijg0erg",
 		Delivery: struct {
 			Name    string `json:"name"`
 			Phone   string `json:"phone"`

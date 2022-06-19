@@ -5,7 +5,6 @@ import (
 	"L0/internal/handlers"
 	"L0/internal/repository"
 	usecase2 "L0/internal/usecase"
-	"context"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -22,12 +21,12 @@ func main() {
 		log.Fatal("zap logger build error")
 	}
 	logger := prLogger.Sugar()
-	//defer func(prLogger *zap.Logger) {
-	//	err = prLogger.Sync()
-	//	if err != nil {
-	//		log.Fatal(err)
-	//	}
-	//}(prLogger)
+	defer func(prLogger *zap.Logger) {
+		err = prLogger.Sync()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(prLogger)
 
 	if err := godotenv.Load(".env"); err != nil {
 		logger.Fatal("error while loading environment ", err)
@@ -50,7 +49,10 @@ func main() {
 	}
 	redis := repository.NewRedisRepository(redisComp.Redis)
 
-	u := usecase2.NewUsecase(r, redis)
+	u, err := usecase2.NewUsecase(r, redis)
+	if err != nil {
+		logger.Error("error during cache initing. Old data will be get from postgres.", err)
+	}
 
 	echoServer := echo.New()
 
@@ -59,9 +61,5 @@ func main() {
 		logger.Fatal("register handlers failed")
 	}
 
-	err = u.InitCache(context.Background())
-	if err != nil {
-		logger.Error("error during cache initing. Old data will be get from postgres")
-	}
 	echoServer.Logger.Fatal(echoServer.Start(":8080"))
 }

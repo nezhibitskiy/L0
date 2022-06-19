@@ -3,8 +3,8 @@ package repository
 import (
 	"L0/internal"
 	"context"
-	"encoding/json"
 	"github.com/gomodule/redigo/redis"
+	json "github.com/mailru/easyjson"
 )
 
 type RedisRepository struct {

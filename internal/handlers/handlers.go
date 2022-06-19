@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"L0/internal"
+	"L0/static"
 	"context"
-	"encoding/json"
 	"github.com/labstack/echo/v4"
+	json "github.com/mailru/easyjson"
 	"github.com/nats-io/stan.go"
 	"net/http"
 	"os"
@@ -68,7 +69,10 @@ func (h *Handler) GetOrder() echo.HandlerFunc {
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, err)
 			}
-			return c.JSON(http.StatusOK, order)
+			if order == nil {
+				return c.HTML(http.StatusNotFound, static.GenerateNotFound())
+			}
+			return c.HTML(http.StatusOK, static.GeneratePage(order))
 		}
 		return c.NoContent(http.StatusBadRequest)
 	}

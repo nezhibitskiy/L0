@@ -31,3 +31,9 @@ services:
     restart: always
     ports:
       - "6379:6379"
+  nats-streaming:
+    image: nats-streaming
+    restart: always
+    ports:
+      - "4223:4223"
+      - "8223:8223"
